@@ -1,0 +1,25 @@
+name: Playwright Service Tests
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  
+  
+jobs:
+  build:
+    name: Playwright Service Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Setup Node for testing
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install
+      - run: cp android.js node_modules/playwright/lib/client/android.js
+      - run: PWS=${{secrets.PWS_ENDPOINT}} npm run test
+      - name: Upload artifacts
+        id: upload-artifacts
+        uses: ./
+        with:
+          artifacts_dir: 'artifacts'
